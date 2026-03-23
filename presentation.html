@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOD Principles Implementation Study | Break The Loop V1</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Libraries -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="presentationStyle.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="#intro">Intro</a>
+        <a href="#abstraction">Abstraction</a>
+        <a href="#inheritance">Inheritance</a>
+        <a href="#polymorphism">Polymorphism</a>
+        <a href="#encapsulation">Encapsulation</a>
+
+        <a href="#video">Gameplay</a>
+    </nav>
+
+    <header id="intro">
+        <div data-aos="zoom-out">
+            <h1>OOP Implementation Study</h1>
+            <p>Analyzing the architectural patterns and Object-Oriented principles in "Break The Loop".</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Abstraction Section -->
+        <section id="abstraction">
+            <div class="container">
+                <h2 data-aos="fade-right"><i class="fas fa-layer-group"></i> </h2>
+                <div class="principle-content">
+                    <div class="side-by-side">
+                        <div class="video-container-small" data-aos="fade-right">
+                            <img src="aseets/Screenshot 2026-03-20 155636.png" alt="Abstraction Implementation"
+                                class="enlargeable-image"
+                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+                        </div>
+                        <div class="description-box" data-aos="fade-left">
+                            <p>Abstraction allows us to focus on <strong>what</strong> an object does rather than
+                                <strong>how</strong> it does it. In this project, we use an abstract base class to
+                                define the contract for all interactable objects in the game world.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="code-block" data-aos="fade-up">
+                        <pre><code class="language-csharp">// InteractableObject.cs
+public abstract class InteractableObject : MonoBehaviour
+{
+    [SerializeField] protected GameObject interactionButton;
+    protected bool playerInRange = false;
+
+    // The abstract contract: Every interactable must implement this
+    protected abstract void Interact(); 
+
+    // Common logic shared by all interactables (UI Toggle)
+    protected virtual void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.CompareTag("Player")) {
+            playerInRange = true;
+            interactionButton.SetActive(true);
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inheritance Section -->
+        <section id="inheritance">
+            <div class="container">
+                <h2 data-aos="fade-right"><i class="fas fa-sitemap"></i> </h2>
+                <div class="principle-content">
+                    <div class="side-by-side">
+                        <div class="video-container-small" data-aos="fade-right">
+                            <div class="video-placeholder-mini">
+                                <i class="fas fa-video"></i>
+                                <p>Video content will be placed here</p>
+                            </div>
+                        </div>
+                        <div class="description-box" data-aos="fade-left">
+                            <p>Inheritance enables code reuse by allowing specialized classes to derive from a general
+                                base class. <code>SpecificDoor</code> and <code>RandomDoor</code> inherit all trigger
+                                and UI logic from <code>InteractableObject</code>, only implementing their unique
+                                interaction logic.</p>
+                        </div>
+                    </div>
+                    <div class="code-block" data-aos="fade-up">
+                        <pre><code class="language-csharp">// SpecificDoor.cs
+public class SpecificDoor : InteractableObject
+{
+    [SerializeField] private string sceneToLoad;
+
+    // Reuses parent's trigger logic, only defines the "Interact" behavior
+    protected override void Interact() {
+        if (playerInRange) SceneManager.LoadScene(sceneToLoad);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Polymorphism Section -->
+        <section id="polymorphism">
+            <div class="container">
+                <h2 data-aos="fade-right"><i class="fas fa-shapes"></i> </h2>
+                <div class="principle-content">
+                    <div class="side-by-side">
+                        <div class="video-container-small" data-aos="fade-right">
+                            <div class="video-placeholder-mini">
+                                <i class="fas fa-video"></i>
+                                <p>Video content will be placed here</p>
+                            </div>
+                        </div>
+                        <div class="description-box" data-aos="fade-left">
+                            <p>Polymorphism allows the system to treat different objects through a common interface. The
+                                UI button calls <code>Interact()</code> on an <code>InteractableObject</code> reference,
+                                and C# automatically executes the correct version based on the actual object type (e.g.,
+                                a Door or a Sign).</p>
+                        </div>
+                    </div>
+                    <div class="code-block" data-aos="fade-up">
+                        <pre><code class="language-csharp">// RandomDoor.cs - Overriding for custom behavior
+protected override void Interact() {
+    if (!playerInRange) return;
+
+    // Polymorphic implementation: Randomly chooses a scene
+    int choice = Random.Range(0, 2);
+    string scene = (choice == 0) ? normalScene : abnormalScene;
+    SceneManager.LoadScene(scene);
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Encapsulation Section -->
+        <section id="encapsulation">
+            <div class="container">
+                <h2 data-aos="fade-right"><i class="fas fa-shield-halved"></i> </h2>
+                <div class="principle-content">
+                    <div class="side-by-side">
+                        <div class="description-box" data-aos="fade-left">
+                            <p>Encapsulation protects the internal state of objects. We use <code>private</code> and
+                                <code>protected</code> modifiers to hide sensitive data, and
+                                <code>[SerializeField]</code> to safely expose variables to the Unity Editor without
+                                breaking code integrity.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="code-block" data-aos="fade-up">
+                        <pre><code class="language-csharp">// Protecting data via access modifiers
+public class PlayerMovement : MonoBehaviour {
+    [SerializeField] private float moveSpeed = 5f; // Hidden from other scripts
+    private Rigidbody2D rb; // Internal state, encapsulated
+
+    private void FixedUpdate() {
+        // Only this class can modify the Rigidbody's velocity directly
+        rb.linearVelocity = movement * moveSpeed;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Video Section -->
+        <section id="video">
+            <div class="container">
+                <h2 data-aos="fade-right"><i class="fas fa-gamepad"></i> Actual Gameplay</h2>
+                <div class="video-section" data-aos="zoom-in">
+                    <div class="video-placeholder" id="video-container">
+                        <i class="fas fa-play-circle"></i>
+                        <p>Gameplay Video Placeholder<br><small>Video content will be inserted here.</small></p>
+                        <!-- Empty div for video as requested -->
+                        <div id="actual-gameplay-video"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 OOD Principles Implementation Study. Built for "Break The Loop V1".</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/csharp.min.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose'
+        });
+    </script>
+    <script>
+        AOS.init({
+            offset: 100,
+            duration: 800,
+            easing: 'ease-in-out',
+            once: false,
+            mirror: true
+        });
+        hljs.highlightAll();
+    </script>
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        // Image Enlargement Logic
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImg");
+        const closeBtn = document.querySelector(".close-modal");
+
+        document.querySelectorAll('.enlargeable-image').forEach(img => {
+            img.onclick = function () {
+                modal.classList.add("active");
+                modal.style.display = "flex";
+                modalImg.src = this.src;
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        });
+
+        const closeModal = () => {
+            modal.classList.remove("active");
+            setTimeout(() => {
+                modal.style.display = "none";
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }, 300);
+        };
+
+        closeBtn.onclick = closeModal;
+        modal.onclick = (e) => {
+            if (e.target === modal || e.target === closeBtn) {
+                closeModal();
+            }
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && modal.classList.contains("active")) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
